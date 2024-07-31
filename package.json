@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "playwright test",
+    "studio": "npx drizzle-kit studio",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"
   },
@@ -20,6 +21,7 @@
     "react-dom": "^18.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@playwright/test": "^1.45.3",
     "@types/node": "^20",
     "@types/react": "^18",

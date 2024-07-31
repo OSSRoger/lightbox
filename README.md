@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js REST API with PostgreSQL
+
+This project is a Next.js application that provides REST API endpoints for managing users and posts. The API uses PostgreSQL for data storage, and the application is configured to be deployed on Vercel.
+
+## Features
+
+- CRUD operations for Users
+- CRUD operations for Posts
+- Validation for user age and non-negative values
+- Automated tests using Playwright
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (>= 18.7)
+- pnpm
+- PostgreSQL
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  git clone https://github.com/OSSRoger/lightbox.git
+  cd lightbox
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+  pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+3. Setup Vercel project and Vercel DB.
 
-## Learn More
+   [Follow the quickstart guide here.](https://vercel.com/docs/storage/vercel-postgres/quickstart#quickstart)
 
-To learn more about Next.js, take a look at the following resources:
+4. Set up environment variables:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   Create a `.env` file in the root of the project and add your PostgreSQL connection string:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```dotenv
+  vercel env pull .env
+```
 
-## Deploy on Vercel
+5. Initialize the database:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   Push the schema to the newly created db in Vercel.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+  npx drizzle-kit push
+```
+
+6. Start the development server:
+
+```bash
+  pnpm dev
+```
+
+7. Inspect the DB
+
+```bash
+  pnpm studio
+```
+
+### Testing
+
+This project uses Playwright for testing. To run the tests:
+
+```bash
+pnpm test
+```

@@ -11,7 +11,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const { title, content, userId } = await request.json();
   if (!title || !content || !userId) {
-    return NextResponse.json({ error: 'Title, content and userId are required' }, { status: 400 });
+    return NextResponse.json({ error: 'title, content and userId are required' }, { status: 400 });
   }
 
   const newPost = await createPost({ title, content, userId });

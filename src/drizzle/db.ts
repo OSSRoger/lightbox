@@ -22,24 +22,19 @@ export async function getUsers() {
   return db.query.UsersTable.findMany();
 }
 
-export async function getUserById(id: SelectUser['id']): Promise<
-  Array<{
-    id: string;
-    name: string;
-    age: number;
-    email: string;
-    updatedAt: Date;
-  }>
-> {
-  return db.select().from(UsersTable).where(eq(UsersTable.id, id));
+export async function getUserById(id: SelectUser['id']): Promise<SelectUser> {
+  const response = await db.select().from(UsersTable).where(eq(UsersTable.id, id));
+  return response[0];
 }
 
 export async function createUser(data: InsertUser) {
-  return await db.insert(UsersTable).values(data).returning();
+  const response = await db.insert(UsersTable).values(data).returning();
+  return response[0];
 }
 
 export async function updateUser(id: SelectUser['id'], data: Partial<Omit<SelectUser, 'id'>>) {
-  return await db.update(UsersTable).set(data).where(eq(UsersTable.id, id)).returning();
+  const response = await db.update(UsersTable).set(data).where(eq(UsersTable.id, id)).returning();
+  return response[0];
 }
 
 export async function deleteUser(id: SelectUser['id']) {
@@ -54,22 +49,18 @@ export async function getPosts() {
 }
 
 export async function createPost(data: InsertPost) {
-  await db.insert(PostsTable).values(data).returning();
+  const response = await db.insert(PostsTable).values(data).returning();
+  return response[0];
 }
 
-export async function getPostById(id: SelectPost['id']): Promise<
-  Array<{
-    id: string;
-    title: string;
-    content: string;
-    updatedAt: Date;
-  }>
-> {
-  return db.select().from(PostsTable).where(eq(PostsTable.id, id));
+export async function getPostById(id: SelectPost['id']): Promise<SelectPost> {
+  const response = await db.select().from(PostsTable).where(eq(PostsTable.id, id));
+  return response[0];
 }
 
 export async function updatePost(id: SelectPost['id'], data: Partial<Omit<SelectPost, 'id'>>) {
-  return await db.update(PostsTable).set(data).where(eq(PostsTable.id, id)).returning();
+  const response = await db.update(PostsTable).set(data).where(eq(PostsTable.id, id)).returning();
+  return response[0];
 }
 
 export async function deletePost(id: SelectPost['id']) {

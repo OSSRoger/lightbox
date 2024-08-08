@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createUser, getUsers } from './../../../drizzle/db';
+import { checkUpsertUserError } from '@/server/utils';
+import { UserSchema } from '@/drizzle/schema';
 
 /**
  * GET /api/users
@@ -73,18 +75,17 @@ export async function GET() {
  *   }
  *
  * @assumptions The email is unique and valid.
- * @limitations None
+ * @limitations Throws if the specified email violates the unique index constraint.
  */
 export async function POST(request: NextRequest) {
-  const { name, age, email } = await request.json();
-  if (typeof name !== 'string' || typeof email !== 'string' || typeof age !== 'number') {
-    return NextResponse.json({ error: 'Name, email, and age are required' }, { status: 400 });
-  }
+  const body = await request.json();
 
-  if (age < 0) {
-    return NextResponse.json({ error: 'Age must be a non-negative number' }, { status: 400 });
-  }
+  try {
+    const { name, age, email } = UserSchema.parse(body);
+    const newUser = await createUser({ name, age, email });
 
-  const newUser = await createUser({ name, age, email });
-  return NextResponse.json(newUser, { status: 201 });
+    return NextResponse.json(newUser, { status: 201 });
+  } catch (error) {
+    return checkUpsertUserError(error);
+  }
 }

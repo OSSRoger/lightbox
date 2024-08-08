@@ -1,4 +1,19 @@
 import { integer, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { z } from 'zod';
+
+// Define the schema with Drizzle using Zod
+export const UserSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }).max(100, { message: "Name can't exceed 100 characters" }),
+  age: z
+    .number()
+    .min(0, { message: 'Age must be a non-negative number' })
+    .max(120, { message: "Age can't exceed 120" }),
+  email: z
+    .string()
+    .email({ message: 'Invalid email address' })
+    .max(100, { message: "Email can't exceed 100 characters" }),
+});
+export const PartialUserSchema = UserSchema.partial();
 
 export const UsersTable = pgTable(
   'users',

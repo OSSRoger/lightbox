@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deleteUser, getUserById, updateUser } from '@/drizzle/db';
+import { checkUpsertUserError } from '@/server/utils';
+import { PartialUserSchema } from '@/drizzle/schema';
 
 /**
  * GET /api/users/{id}
@@ -77,20 +79,20 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  *   }
  *
  * @assumptions The user ID exists in the database.
- * @limitations None
+ * @limitations Throws if a specified email violates the unique index constraint.
  */
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const { name, age, email } = await request.json();
-
-  if (age && age < 0) {
-    return NextResponse.json({ error: 'Age must be a non-negative number' }, { status: 400 });
+  const body = await request.json();
+  try {
+    const data = PartialUserSchema.parse(body);
+    const user = await updateUser(params.id, data);
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    return NextResponse.json(user);
+  } catch (error) {
+    return checkUpsertUserError(error);
   }
-
-  const user = await updateUser(params.id, { name, age, email });
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
-  }
-  return NextResponse.json(user);
 }
 
 /**
@@ -105,17 +107,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
  * @response
  * - Status: 204 No Content
  *
- * @errors
- * - 404 Not Found: User not found
- *   {
- *     "error": "User not found"
- *   }
- *
  * @assumptions The user ID exists in the database.
- * @limitations None
+ * @limitations Event if deleteUser does not find a user to delete 204 is returned.
  */
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  // TODO: validate that 204 is still returned if the user is already deleted.
   await deleteUser(params.id);
+
   return new NextResponse(null, { status: 204 });
 }
